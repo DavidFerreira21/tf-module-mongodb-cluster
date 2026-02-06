@@ -6,7 +6,7 @@ Modulo Terraform opinionated para criacao de clusters MongoDB Atlas (Replica Set
 
 - Forcar backup habilitado.
 - Restringir tamanhos de instancia.
-- Restringir regioes (somente Azure ou AWS, Atlas Region permitido).
+- Restringir regioes por cloud (AWS/Azure) com allowlist.
 - Evitar que decisoes criticas fiquem com o consumidor.
 - Manter uma interface simples e dificil de usar errado.
 
@@ -16,6 +16,7 @@ Modulo Terraform opinionated para criacao de clusters MongoDB Atlas (Replica Set
 - Backup sempre habilitado.
 - Restringe cloud provider a Azure ou AWS.
 - Controla instance size (M10, M20, M30).
+- Aplica tags padrao do modulo e permite tags adicionais.
 - Exponde apenas outputs essenciais.
 
 ## Uso basico
@@ -27,8 +28,8 @@ module "atlas_cluster" {
   project_id         = "<atlas-project-id>"
   cluster_name       = "app-prod"
   instance_size_name = "M20"
-  provider_name      = "AZURE"
-  region_name        = "BRAZIL_SOUTH"
+  provider_name      = "AWS"
+  region_name        = "US_EAST_1"
 }
 ```
 
@@ -66,8 +67,8 @@ module "atlas_cluster" {
   project_id         = "<atlas-project-id>"
   cluster_name       = "app-prod"
   instance_size_name = "M20"
-  provider_name      = "AZURE"
-  region_name        = "BRAZIL_SOUTH"
+  provider_name      = "AWS"
+  region_name        = "US_EAST_1"
 
   backup_policy = {
     reference_hour_of_day    = 2
@@ -100,8 +101,8 @@ module "atlas_cluster" {
   project_id         = "<atlas-project-id>"
   cluster_name       = "app-prod"
   instance_size_name = "M20"
-  provider_name      = "AZURE"
-  region_name        = "BRAZIL_SOUTH"
+  provider_name      = "AWS"
+  region_name        = "US_EAST_1"
 
   autoscaling = {
     compute_enabled            = true
@@ -115,18 +116,27 @@ module "atlas_cluster" {
 ## Inputs
 
 - `project_id` (string, opcional): ID do projeto MongoDB Atlas. Se informado, sobrescreve o local por cloud/ambiente.
-- `environment` (string, opcional): Ambiente do cluster. Valores permitidos: `prd` ou `hml`. Default: `hml`.
+- `environment` (string, opcional): Ambiente do cluster. Valores permitidos: `prd`, `hml` ou `dev`. Default: `hml`.
 - `cluster_name` (string, obrigatorio): Nome do cluster.
 - `instance_size_name` (string, obrigatorio): Tamanho do cluster. Valores permitidos: `M10`, `M20`, `M30`.
-- `provider_name` (string, opcional): Cloud provider do Atlas. Valores permitidos: `AZURE` ou `AWS`. Default: `AZURE`.
+- `provider_name` (string, opcional): Cloud provider do Atlas. Valores permitidos: `AZURE` ou `AWS`. Default: `AWS`.
 - `region_name` (string, obrigatorio): Atlas Region para o provider. O modulo valida contra a lista permitida em `locals.tf`.
+- `disk_size_gb` (number, opcional): Tamanho do disco (GB) por regiao do cluster. Default: `10`.
 - `autoscaling` (object, opcional): Configuracoes de auto-scaling.
 - `backup_policy` (object, opcional): Politica de backup. Se omitido, aplica a politica minima HML.
 - `use_local_project_id` (bool, opcional): Quando `project_id` estiver null, usa o local `project_ids_by_provider_env`. Default: `true`.
+- `tags` (map(string), opcional): Tags adicionais para o cluster. O modulo adiciona tags padrao automaticamente.
 
 ## Projetos por cloud/ambiente
 
 Se preferir nao informar `project_id` no modulo, preencha os IDs em `locals.tf` na chave `project_ids_by_provider_env` e informe `provider_name` e `environment`.
+
+## Regioes permitidas
+
+Allowlist atual em `locals.tf`:
+
+- AWS: `US_EAST_1`, `SA_EAST_1`
+- AZURE: `EAST_US_2`, `BRAZIL_SOUTH`
 
 ## Outputs
 
