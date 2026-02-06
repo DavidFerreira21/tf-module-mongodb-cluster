@@ -12,13 +12,14 @@ variable "project_id" {
   }
 }
 
+
 variable "environment" {
   type        = string
   description = "Ambiente do cluster (prd ou hml)."
   default     = "hml"
 
   validation {
-    condition     = contains(["prd", "hml"], var.environment)
+    condition     = contains(["prd", "hml","dev"], var.environment)
     error_message = "environment deve ser prd ou hml."
   }
 }
@@ -48,10 +49,16 @@ variable "region_name" {
   }
 }
 
+variable "tags" {
+  type        = map(string)
+  description = "tags."
+  default = {}
+}
+
 variable "provider_name" {
   type        = string
   description = "Cloud provider do Atlas. Valores permitidos: AZURE ou AWS."
-  default     = "AZURE"
+  default     = "AWS"
 
   validation {
     condition     = contains(local.allowed_providers, var.provider_name)
@@ -71,6 +78,7 @@ variable "autoscaling" {
     compute_min_instance_size  = optional(string)
     compute_max_instance_size  = optional(string)
     compute_scale_down_enabled = optional(bool)
+    disk_gb_enabled            = optional(bool)
   })
   default     = null
   description = "Configura auto-scaling. Quando null, o modulo nao configura auto-scaling."
@@ -113,4 +121,11 @@ variable "backup_policy" {
     }
   }
   description = "Politica de backup. Se nao informado, aplica a politica minima HML (daily por 7 dias)."
+}
+
+
+variable "disk_size_gb" {
+  description = "Tamanho do disco (GB) por região do cluster Atlas."
+  type        = number
+  default     = 10
 }

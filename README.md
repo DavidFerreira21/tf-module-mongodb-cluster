@@ -10,14 +10,6 @@ Modulo Terraform opinionated para criacao de clusters MongoDB Atlas (Replica Set
 - Evitar que decisoes criticas fiquem com o consumidor.
 - Manter uma interface simples e dificil de usar errado.
 
-## O que este modulo NAO faz
-
-- Nao cria usuarios.
-- Nao cria networking (VPC Peering / Private Endpoint).
-- Nao desliga backup.
-- Nao permite tamanhos fora do padrao.
-- Nao tenta cobrir todos os cenarios do Atlas.
-
 ## O que este modulo faz
 
 - Cria um cluster MongoDB Atlas (Replica Set).
