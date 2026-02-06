@@ -113,19 +113,28 @@ module "atlas_cluster" {
 }
 ```
 
-## Inputs
+## Resources
 
-- `project_id` (string, opcional): ID do projeto MongoDB Atlas. Se informado, sobrescreve o local por cloud/ambiente.
-- `environment` (string, opcional): Ambiente do cluster. Valores permitidos: `prd`, `hml` ou `dev`. Default: `hml`.
-- `cluster_name` (string, obrigatorio): Nome do cluster.
-- `instance_size_name` (string, obrigatorio): Tamanho do cluster. Valores permitidos: `M10`, `M20`, `M30`.
-- `provider_name` (string, opcional): Cloud provider do Atlas. Valores permitidos: `AZURE` ou `AWS`. Default: `AWS`.
-- `region_name` (string, obrigatorio): Atlas Region para o provider. O modulo valida contra a lista permitida em `locals.tf`.
-- `disk_size_gb` (number, opcional): Tamanho do disco (GB) por regiao do cluster. Default: `10`.
-- `autoscaling` (object, opcional): Configuracoes de auto-scaling.
-- `backup_policy` (object, opcional): Politica de backup. Se omitido, aplica a politica minima HML.
-- `use_local_project_id` (bool, opcional): Quando `project_id` estiver null, usa o local `project_ids_by_provider_env`. Default: `true`.
-- `tags` (map(string), opcional): Tags adicionais para o cluster. O modulo adiciona tags padrao automaticamente.
+| Nome | Tipo | Descricao |
+|---|---|---|
+| `mongodbatlas_advanced_cluster.this` | Resource | Cluster MongoDB Atlas (Replica Set). |
+| `mongodbatlas_cloud_backup_schedule.this` | Resource | Politica de backup do cluster (sempre aplicada). |
+
+## Variaveis
+
+| Nome | Tipo | Obrigatorio | Default | Descricao |
+|---|---|---|---|---|
+| `project_id` | `string` | Nao | `null` | ID do projeto MongoDB Atlas. Se informado, sobrescreve o local por cloud/ambiente. |
+| `environment` | `string` | Nao | `hml` | Ambiente do cluster. Valores permitidos: `prd`, `hml` ou `dev`. |
+| `cluster_name` | `string` | Sim | - | Nome do cluster. |
+| `instance_size_name` | `string` | Sim | - | Tamanho do cluster. Valores permitidos: `M10`, `M20`, `M30`. |
+| `provider_name` | `string` | Nao | `AWS` | Cloud provider do Atlas. Valores permitidos: `AZURE` ou `AWS`. |
+| `region_name` | `string` | Sim | - | Atlas Region para o provider. O modulo valida contra a lista permitida em `locals.tf`. |
+| `disk_size_gb` | `number` | Nao | `10` | Tamanho do disco (GB) por regiao do cluster. |
+| `autoscaling` | `object` | Nao | `null` | Configuracoes de auto-scaling. |
+| `backup_policy` | `object` | Nao | Politica HML | Politica de backup. Se omitido, aplica a politica minima HML. |
+| `use_local_project_id` | `bool` | Nao | `true` | Quando `project_id` estiver null, usa o local `project_ids_by_provider_env`. |
+| `tags` | `map(string)` | Nao | `{}` | Tags adicionais para o cluster. O modulo adiciona tags padrao automaticamente. |
 
 ## Projetos por cloud/ambiente
 
@@ -148,4 +157,4 @@ Allowlist atual em `locals.tf`:
 
 ## Exemplos
 
-Veja `examples/basic`.
+Veja `examples`
